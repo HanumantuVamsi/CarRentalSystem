@@ -1,0 +1,62 @@
+package com.cts.carrentalsystem.controllers;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cts.carrentalsystem.dtos.CarDto;
+import com.cts.carrentalsystem.service.CarService;
+
+@RestController
+@RequestMapping("/api/cars")
+public class CarController {
+	
+	@Autowired
+	private CarService service;
+    
+	@PostMapping("/")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public ResponseEntity<CarDto> createCar(@RequestBody CarDto cars){
+		
+		return new ResponseEntity<CarDto>(service.createCar(cars),HttpStatus.CREATED);
+	}
+	
+	@GetMapping("/")
+	@PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
+	public ResponseEntity<List<CarDto>> getAllCars(){
+		
+		return new ResponseEntity<List<CarDto>>(service.getAllCars(),HttpStatus.OK);
+	}
+	
+	@GetMapping("/{id}")
+	@PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
+	public ResponseEntity<CarDto> getCar(@PathVariable("id") long id){
+		return new ResponseEntity<CarDto>(service.getCar(id),HttpStatus.OK);
+	}
+	
+	@PutMapping("/{id}")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public ResponseEntity<CarDto> updateCar(@PathVariable("id") long id,@RequestBody CarDto cars){
+		
+		return new ResponseEntity<CarDto>(service.updateCar(id,cars),HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/{id}")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public ResponseEntity<String> deleteCar(@PathVariable("id") long id){
+		service.deleteCar(id);
+		
+		return new ResponseEntity<String>("Car is Deleted Successfully",HttpStatus.OK);
+	}
+}
