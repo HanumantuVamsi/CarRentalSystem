@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +22,11 @@ import com.cts.carrentalsystem.dtos.BookingDetailsDto;
 import com.cts.carrentalsystem.model.Booking;
 import com.cts.carrentalsystem.service.BookingService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/bookings")
+@Validated
 public class BookingController {
 	
 	@Autowired
@@ -30,7 +34,7 @@ public class BookingController {
      
 	@PostMapping("/{user_id}/booking/{car_id}")
 	@PreAuthorize("hasAuthority('CUSTOMER')")
-	public ResponseEntity<String> booking(@PathVariable("user_id") long userId,@PathVariable("car_id") long carId,@RequestBody BookDto book){
+	public ResponseEntity<String> booking(@PathVariable("user_id") long userId,@PathVariable("car_id") long carId,@Valid @RequestBody BookDto book){
 		
 		service.booking(userId,carId,book);
 		

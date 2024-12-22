@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,8 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cts.carrentalsystem.dtos.CarDto;
 import com.cts.carrentalsystem.service.CarService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/cars")
+@Validated
 public class CarController {
 	
 	@Autowired
@@ -27,7 +31,7 @@ public class CarController {
     
 	@PostMapping("/")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<CarDto> createCar(@RequestBody CarDto cars){
+	public ResponseEntity<CarDto> createCar(@Valid @RequestBody CarDto cars){
 		
 		return new ResponseEntity<CarDto>(service.createCar(cars),HttpStatus.CREATED);
 	}
@@ -47,7 +51,7 @@ public class CarController {
 	
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<CarDto> updateCar(@PathVariable("id") long id,@RequestBody CarDto cars){
+	public ResponseEntity<CarDto> updateCar(@PathVariable("id") long id,@Valid @RequestBody CarDto cars){
 		
 		return new ResponseEntity<CarDto>(service.updateCar(id,cars),HttpStatus.OK);
 	}
