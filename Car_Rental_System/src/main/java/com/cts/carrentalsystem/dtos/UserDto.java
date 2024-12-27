@@ -1,5 +1,7 @@
 package com.cts.carrentalsystem.dtos;
 
+import com.cts.carrentalsystem.enums.UserRole;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -27,5 +29,7 @@ public class UserDto {
 		this.email = email;
 		this.password = password;
 	}
+	
+	private UserRole role;
 
 }
