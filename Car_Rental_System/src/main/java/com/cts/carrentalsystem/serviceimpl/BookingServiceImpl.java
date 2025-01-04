@@ -56,10 +56,10 @@ public class BookingServiceImpl implements BookingService {
 		booking.setStartDate(book.getStartDate());
 		booking.setEndDate(book.getEndDate());
 		booking.setPrice(price);
-		booking.setStatus(book.getStatus());
+		booking.setStatus(BookingStatus.BOOKED);
 
 		car.setStatus(CarStatus.BOOKED);
-
+		
 		bookingRepo.save(booking);
 
 	}
@@ -84,7 +84,7 @@ public class BookingServiceImpl implements BookingService {
 			booking.getBookingDate(),
 			booking.getStartDate(),
 			booking.getEndDate(), 
-			booking.getStatus() ); 
+			 ); 
 	}
 
 	@Override

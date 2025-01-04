@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
 import com.cts.carrentalsystem.dtos.CarDto;
+import com.cts.carrentalsystem.enums.CarStatus;
+import com.cts.carrentalsystem.exception.CarAlreadyBooked;
 import com.cts.carrentalsystem.exception.CarNotFound;
 import com.cts.carrentalsystem.model.Car;
 import com.cts.carrentalsystem.repository.CarRepository;
@@ -94,8 +96,13 @@ public class CarServiceImpl implements CarService {
 		Car car = carRepo.findById(id).orElseThrow(
 				()-> new CarNotFound(String.format("Car with the car id %d is not found",id))
 				);
+		if(car.getStatus().equals(CarStatus.AVAILABLE)) {
+			carRepo.deleteById(id);
+		}
+		else {
+			throw new CarAlreadyBooked("The Car you are deleting is booked by someone else");
+		}
 		
-		carRepo.deleteById(id);
 		
 		
 	}
