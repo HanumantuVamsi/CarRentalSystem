@@ -95,7 +95,13 @@ public class BookingServiceImpl implements BookingService {
 		Car car = carRepo.findById(carId)
 				.orElseThrow(() -> new CarNotFound(String.format("Car Id %d is not found", carId)));
 		
-		Booking booking = bookingRepo.findByUserIdAndCarId(userId,carId);
+		List<Booking> book =bookingRepo.findByUserIdAndCarId(userId,carId);
+		Booking booking =null;
+		for(Booking b:  book) {
+			if(b.getStatus().equals(BookingStatus.BOOKED)) {
+				booking = b;
+			}
+		}
 		
 		booking.setStatus(BookingStatus.CANCELLED);
 		car.setStatus(CarStatus.AVAILABLE);
