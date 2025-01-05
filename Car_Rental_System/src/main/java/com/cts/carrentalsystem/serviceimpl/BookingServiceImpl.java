@@ -3,6 +3,7 @@ package com.cts.carrentalsystem.serviceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,7 +84,7 @@ public class BookingServiceImpl implements BookingService {
 			booking.getCar().getYear(), 
 			booking.getBookingDate(),
 			booking.getStartDate(),
-			booking.getEndDate(), 
+			booking.getEndDate()
 			 ); 
 	}
 
@@ -111,6 +112,8 @@ public class BookingServiceImpl implements BookingService {
 		
 		
 	}
+	
+	
 
 	@Override
 	public List<AllBookingDetailsDto> getAllBookingDetails() {
@@ -133,6 +136,50 @@ public class BookingServiceImpl implements BookingService {
 			booking.getEndDate(), 
 			booking.getStatus() ); 
 	}
+
+	@Override
+	public String completeBooking(long userId, long carId) {
+	    Users user = userRepo.findById(userId)
+	            .orElseThrow(() -> new UserNotFound(String.format("User Id %d is not found", userId)));
+	    Car car = carRepo.findById(carId)
+	            .orElseThrow(() -> new CarNotFound(String.format("Car Id %d is not found", carId)));
+
+	    List<Booking> book =bookingRepo.findByUserIdAndCarId(userId,carId);
+		Booking booking =null;
+		for(Booking b:  book) {
+			if(b.getStatus().equals(BookingStatus.BOOKED)) {
+				booking = b;
+			}
+		}
+
+	    LocalDate today = LocalDate.now();
+
+	    if (!booking.getEndDate().isAfter(today)) {
+	        booking.setEndDate(today);
+	        booking.setStatus(BookingStatus.COMPLETED);
+	        car.setStatus(CarStatus.AVAILABLE);
+
+	        bookingRepo.save(booking);
+	        carRepo.save(car);
+
+	        return String.format("Booking completed successfully! Booking Id: %d", booking.getBookId());
+	    } else {
+	        long daysLate = ChronoUnit.DAYS.between(booking.getEndDate(), today)+1;
+
+	        int totalBill = (int) (booking.getPrice() + 1000 + (daysLate * car.getPricePerDay()));
+	        booking.setEndDate(today);
+	        booking.setStatus(BookingStatus.COMPLETED);
+	        car.setStatus(CarStatus.AVAILABLE);
+	        booking.setPrice(totalBill);
+
+	        bookingRepo.save(booking);
+	        carRepo.save(car);
+
+	        return String.format("The booking is still active. Total bill: ", totalBill);
+	    }
+	}
+
+
 	
 	
 	

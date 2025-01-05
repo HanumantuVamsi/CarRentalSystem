@@ -17,4 +17,6 @@ public interface BookingService {
 
 	List<AllBookingDetailsDto> getAllBookingDetails();
 
+	String completeBooking(long userId, long carId);
+
 }

@@ -55,6 +55,12 @@ public class BookingController {
     	service.cancelBooking(userId,carId);
     	return new ResponseEntity<String>("Booking is Cancelled SuccessFully",HttpStatus.OK);
     }
+    
+    @PutMapping("/{user_id}/booking/{car_id}/complete")
+    public ResponseEntity<String>completeBooking(@PathVariable("user_id")long userId,@PathVariable("car_id")long carId){
+    	service.completeBooking(userId,carId);
+    	return new ResponseEntity<String>(service.completeBooking(userId,carId),HttpStatus.OK);
+    }
 	
     @GetMapping("/")
     @PreAuthorize("hasAuthority('ADMIN')")
