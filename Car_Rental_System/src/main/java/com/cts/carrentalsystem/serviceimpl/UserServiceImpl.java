@@ -113,10 +113,13 @@ public class UserServiceImpl implements UserService {
         
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
-        
-        String token = jwtService.generateToken(user.getEmail());
-        logger.info("User verified successfully: {}", user.getEmail());
-        
-        return token;
+        if(authentication.isAuthenticated()) {
+	        String token = jwtService.generateToken(user.getEmail());
+	        logger.info("User verified successfully: {}", user.getEmail());
+	        return token;
+        }
+        else {
+          return "invalid";
+        }
     }
 }

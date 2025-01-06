@@ -24,6 +24,6 @@ public class BookDto {
 	@NotNull(message = "End date is mandatory") @DateTimeFormat(pattern = "yyyy-MM-dd") 
 	private LocalDate endDate;
 	
-	@NotNull(message = "Booking status is mandatory") 
-	private BookingStatus status; 
+//	@NotNull(message = "Booking status is mandatory") 
+//	private BookingStatus status; 
 }
