@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
+	 // Create a new user
 	@Override
 	public UserDto createUser(UserDto userDto) {
 		logger.info("Creating user: {}", userDto.getUsername());
@@ -64,6 +65,7 @@ public class UserServiceImpl implements UserService {
 		return mapToDto(savedUser);
 	}
 
+	//converting userdto to users
 	private Users mapToEntity(UserDto userDto) {
 		Users user = new Users();
 		user.setUsername(userDto.getUsername());
@@ -72,6 +74,7 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
+	//converting users to userdto
 	private UserDto mapToDto(Users user) {
 		UserDto userDto = new UserDto();
 		userDto.setUsername(user.getUsername());
@@ -81,6 +84,7 @@ public class UserServiceImpl implements UserService {
 		return userDto;
 	}
 
+	//validating the input data from user
 	private void validateUserDto(UserDto userDto) {
 		logger.info("Validating user data: {}", userDto.getUsername());
 
@@ -103,16 +107,19 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	//validation for valid user
 	private boolean isValidEmail(String email) {
 		String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
 		return email.matches(emailRegex);
 	}
 
+	//validation for valid password
 	private boolean isValidPassword(String password) {
 		return password.length() >= 8 && password.matches(".*[A-Z].*") && password.matches(".*[a-z].*")
 				&& password.matches(".*\\d.*") && password.matches(".*[!@#\\$%\\^&\\*].*");
 	}
 
+	 // Verify user login details
 	@Override
 	public Map<String, String> verify(UserDto user) {
 		logger.info("Verifying user: {}", user.getEmail());
@@ -132,11 +139,13 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	//getting role form the users table
 	public String getUserRole(String email) {
 		Users user = userRepo.findByEmail(email).get();
-		return user.getRole().name(); // Assuming `getRole()` returns an enum with `name()` method
+		return user.getRole().name();
 	}
 
+	  // Get all users
 	@Override
 	public List<UserDto> getAllUsers() {
 		// TODO Auto-generated method stub

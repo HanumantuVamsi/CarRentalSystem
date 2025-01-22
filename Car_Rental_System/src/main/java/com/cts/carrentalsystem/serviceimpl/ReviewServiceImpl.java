@@ -33,6 +33,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Autowired
     private ReviewRepository reviewRepo;
  
+    // Create a new review
 	@Override
 	public String createReview(long carId, ReviewDto reviewDto,String token) {
 		Review review = new Review();
@@ -53,7 +54,7 @@ public class ReviewServiceImpl implements ReviewService {
 		return "Review Saved Successfully";
 	}
 	
-	
+	// Extract user ID from token
 	public long getUserIdFromToken(String token)   { 
     	String email = service.extractUserName(token.substring(7)); // Remove 'Bearer ' prefix 
     	Users user = userRepo.findByEmail(email).orElseThrow(
@@ -62,7 +63,7 @@ public class ReviewServiceImpl implements ReviewService {
         return user.getId();
     }
 
-
+	 // Get all reviews for a specific car
 	@Override
 	public List<ReviewDto> getAllReviews(String token, long carId) {
 		// TODO Auto-generated method stub

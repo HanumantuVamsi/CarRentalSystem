@@ -27,7 +27,7 @@ public class CarServiceImpl implements CarService {
     @Autowired
     private ModelMapper modelMapper;
 
-    
+    // Create a new car
     @Override
     public CarDto createCar(CarDto cars) {
         logger.info("Creating car with model: {}", cars.getModel());
@@ -52,6 +52,7 @@ public class CarServiceImpl implements CarService {
     }
 
 
+    // Get all cars
     @Override
     public List<CarDto> getAllCars() {
         logger.info("Retrieving all cars");
@@ -62,6 +63,8 @@ public class CarServiceImpl implements CarService {
     }
 
 
+    
+    // Get car by ID
     @Override
     public CarDto getCar(long id) {
         logger.info("Retrieving car with ID: {}", id);
@@ -77,6 +80,7 @@ public class CarServiceImpl implements CarService {
 
 
 
+    // Update car details
     @Override
     public CarDto updateCar(long id, CarDto cars) {
         logger.info("Updating car with ID: {}", id);
@@ -98,7 +102,7 @@ public class CarServiceImpl implements CarService {
         return updatedCarDto;
     }
 
-
+    // Delete a car
     @Override
     public void deleteCar(long id) {
         logger.info("Deleting car with ID: {}", id);

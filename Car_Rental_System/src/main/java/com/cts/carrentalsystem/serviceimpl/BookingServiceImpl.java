@@ -96,6 +96,7 @@ public class BookingServiceImpl implements BookingService {
         return bookings.stream() .map(this::mapToDTO) .collect(Collectors.toList());
     }
 
+    //converting booking model to booking dto
     private BookingDetailsDto mapToDTO(Booking booking) {
         return new BookingDetailsDto(
             booking.getBookId(),
@@ -161,6 +162,8 @@ public class BookingServiceImpl implements BookingService {
         return bookings.stream().map(this::BookingToAllBooking).collect(Collectors.toList()); 
     }
 
+    
+    //converting booking to all booking details dto
     private AllBookingDetailsDto BookingToAllBooking(Booking booking) {
         return new AllBookingDetailsDto(
             booking.getBookId(),

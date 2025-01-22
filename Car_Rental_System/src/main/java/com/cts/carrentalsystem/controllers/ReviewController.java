@@ -23,12 +23,14 @@ public class ReviewController {
 	@Autowired
 	ReviewService service;
    
+	 // Create a new review
 	@PostMapping("/{carId}")
 	public ResponseEntity<String> createReview(@RequestHeader("Authorization") String token,@PathVariable("carId") long carId,@RequestBody ReviewDto reviewDto){
 		
 		return new ResponseEntity<String>(service.createReview(carId,reviewDto,token),HttpStatus.OK);
 	}
 	
+	 // Get all reviews for a specific car
 	@GetMapping("/{carId}")
 	public ResponseEntity<List<ReviewDto>> getAllReviews(@RequestHeader("Authorization") String token,@PathVariable("carId") long carId){
 		return new ResponseEntity<List<ReviewDto>>(service.getAllReviews(token,carId),HttpStatus.OK);

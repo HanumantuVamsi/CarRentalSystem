@@ -29,6 +29,8 @@ public class CarController {
 	@Autowired
 	private CarService service;
     
+	
+	// Create a new car (Admin only)
 	@PostMapping("/")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<CarDto> createCar(@Valid @RequestBody CarDto cars){
@@ -36,6 +38,7 @@ public class CarController {
 		return new ResponseEntity<CarDto>(service.createCar(cars),HttpStatus.CREATED);
 	}
 	
+	// Get all cars (Admin and Customer)
 	@GetMapping("/")
 	@PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
 	public ResponseEntity<List<CarDto>> getAllCars(){
@@ -43,12 +46,14 @@ public class CarController {
 		return new ResponseEntity<List<CarDto>>(service.getAllCars(),HttpStatus.OK);
 	}
 	
+	 // Get car by ID (Admin and Customer)
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
 	public ResponseEntity<CarDto> getCar(@PathVariable("id") long id){
 		return new ResponseEntity<CarDto>(service.getCar(id),HttpStatus.OK);
 	}
 	
+	 // Update car details (Admin only)
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<CarDto> updateCar(@PathVariable("id") long id,@Valid @RequestBody CarDto cars){
@@ -56,6 +61,7 @@ public class CarController {
 		return new ResponseEntity<CarDto>(service.updateCar(id,cars),HttpStatus.OK);
 	}
 	
+     // Delete a car (Admin only)
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<String> deleteCar(@PathVariable("id") long id){
