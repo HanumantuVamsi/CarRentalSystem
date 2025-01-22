@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CarDto {
    
+	private long id;
 	@NotBlank(message = "Brand should not be empty")
 	private String brand;
 	

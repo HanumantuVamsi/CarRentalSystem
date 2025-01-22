@@ -20,7 +20,9 @@ public class BookingDetailsDto {
 	private LocalDate bookedDate;
 	private LocalDate startDate;
 	private LocalDate endDate;
-	//private BookingStatus status;
+	int price;
+	private BookingStatus status;
+	private long carId;
 	
 
 }

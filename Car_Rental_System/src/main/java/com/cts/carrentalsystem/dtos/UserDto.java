@@ -24,12 +24,12 @@ public class UserDto {
 	@NotBlank(message = "Password is mandatory") 
 	@Size(min = 6, message = "Password must be at least 6 characters long")
 	private String password;
-
+   
 	public UserDto(String email, String password) {
 		this.email = email;
 		this.password = password;
 	}
 	
-	private UserRole role;
+    private UserRole role;
 
 }

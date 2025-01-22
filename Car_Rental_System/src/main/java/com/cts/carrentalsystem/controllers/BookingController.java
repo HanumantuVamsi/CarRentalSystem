@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -32,36 +33,43 @@ public class BookingController {
 	@Autowired
 	private BookingService service;
      
-	@PostMapping("/{user_id}/booking/{car_id}")
+	 // Book a car for a customer
+	@PostMapping("/booking/{car_id}")
 	@PreAuthorize("hasAuthority('CUSTOMER')")
-	public ResponseEntity<String> booking(@PathVariable("user_id") long userId,@PathVariable("car_id") long carId,@Valid @RequestBody BookDto book){
+	public ResponseEntity<String> booking(@PathVariable("car_id") long carId,@Valid @RequestBody BookDto book,@RequestHeader("Authorization") String token){
 		
-		service.booking(userId,carId,book);
+		service.booking(token,carId,book);
 		
 		return new ResponseEntity<String>("Booking is Succesfull",HttpStatus.OK);
 	}
 	
-	@GetMapping("/{user_id}")
+	// Get booking details for the authenticated user
+	@GetMapping("/id")
 	@PreAuthorize("hasAuthority('CUSTOMER')")
-	public ResponseEntity<List<BookingDetailsDto>>getBookingByUserId(@PathVariable("user_id") long userId){
+	public ResponseEntity<List<BookingDetailsDto>>getBookingByUserId(@RequestHeader("Authorization") String token){
 		
 		
-		return new ResponseEntity<List<BookingDetailsDto>>(service.getBookingByUserId(userId),HttpStatus.OK);
+		return new ResponseEntity<List<BookingDetailsDto>>(service.getBookingByUserId(token),HttpStatus.OK);
 	}
 	
-    @PutMapping("/{user_id}/booking/{car_id}/cancel")
+	 // Cancel a booking 
+    @PutMapping("/booking/{book_id}/cancel")
 	@PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<String>cancleBooking(@PathVariable("user_id")long userId,@PathVariable("car_id")long carId){
-    	service.cancelBooking(userId,carId);
+    public ResponseEntity<String>cancleBooking(@RequestHeader("Authorization") String token,@PathVariable("book_id")long bookId){
+    	service.cancelBooking(token,bookId);
     	return new ResponseEntity<String>("Booking is Cancelled SuccessFully",HttpStatus.OK);
     }
     
-    @PutMapping("/{user_id}/booking/{car_id}/complete")
-    public ResponseEntity<String>completeBooking(@PathVariable("user_id")long userId,@PathVariable("car_id")long carId){
-    	service.completeBooking(userId,carId);
-    	return new ResponseEntity<String>(service.completeBooking(userId,carId),HttpStatus.OK);
+    // Mark a booking as complete (Admin only)
+    @PutMapping("/booking/{book_id}/complete")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<AllBookingDetailsDto>completeBooking(@PathVariable("book_id")long bookId){
+
+    	return new ResponseEntity<AllBookingDetailsDto>(service.completeBooking(bookId),HttpStatus.OK);
     }
 	
+    
+    // Get all booking details (Admin only)
     @GetMapping("/")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<AllBookingDetailsDto>>getAllBookings(){

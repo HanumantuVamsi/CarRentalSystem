@@ -13,6 +13,7 @@ import com.cts.carrentalsystem.dtos.BookDto;
 import com.cts.carrentalsystem.dtos.BookingDetailsDto;
 import com.cts.carrentalsystem.enums.BookingStatus;
 import com.cts.carrentalsystem.enums.CarStatus;
+import com.cts.carrentalsystem.exception.BookingNotFound;
 import com.cts.carrentalsystem.exception.CarAlreadyBooked;
 import com.cts.carrentalsystem.exception.CarNotFound;
 import com.cts.carrentalsystem.exception.UserNotFound;
@@ -22,6 +23,7 @@ import com.cts.carrentalsystem.model.Users;
 import com.cts.carrentalsystem.repository.BookingRepository;
 import com.cts.carrentalsystem.repository.CarRepository;
 import com.cts.carrentalsystem.repository.UserRepository;
+import com.cts.carrentalsystem.security.JWTService;
 import com.cts.carrentalsystem.service.BookingService;
 
 import org.slf4j.Logger;
@@ -40,9 +42,15 @@ public class BookingServiceImpl implements BookingService {
 
     @Autowired
     private BookingRepository bookingRepo;
+    
+    @Autowired
+    private JWTService service;
 
+    // Book a car for a customer
     @Override
-    public void booking(long userId, long carId, BookDto book) {
+    public void booking(String token, long carId, BookDto book) {
+    	long userId = getUserIdFromToken(token);
+    
         logger.info("Booking request received for userId: {}, carId: {}", userId, carId);
         
         Users user = userRepo.findById(userId)
@@ -70,9 +78,13 @@ public class BookingServiceImpl implements BookingService {
         bookingRepo.save(booking);
         logger.info("Booking created successfully for userId: {}, carId: {}, bookingId: {}", userId, carId, booking.getBookId());
     }
-
+    
+    
+    
+    // Get booking details for the authenticated user
     @Override
-    public List<BookingDetailsDto> getBookingByUserId(long userId) {
+    public List<BookingDetailsDto> getBookingByUserId(String token) {
+    	long userId = getUserIdFromToken(token);
         logger.info("Retrieving bookings for userId: {}", userId);
         
         Users user = userRepo.findById(userId)
@@ -92,14 +104,29 @@ public class BookingServiceImpl implements BookingService {
             booking.getCar().getYear(),
             booking.getBookingDate(),
             booking.getStartDate(),
-            booking.getEndDate()
+            booking.getEndDate(),
+            booking.getPrice(),
+            booking.getStatus(),
+            booking.getCar().getId()
         ); 
     }
 
+    // Cancel a booking
     @Override
-    public void cancelBooking(long userId, long carId) {
-        logger.info("Cancellation request received for userId: {}, carId: {}", userId, carId);
-        
+    public void cancelBooking(String token, long bookId) {
+   
+        long userId = getUserIdFromToken(token);
+        Booking bookingCheck = bookingRepo.findById(bookId).orElseThrow(
+        		()-> new BookingNotFound("Booking is not found with this id"))
+        		;
+        logger.info("Cancellation request received for userId: {}, carId: {}", userId, bookingCheck.getCar().getId());
+        if(userId!=bookingCheck.getUser().getId()) {
+        	throw new BookingNotFound("Booking is not found with this id");
+        }
+        if(bookingCheck.getStatus().equals(BookingStatus.CANCELLED)) {
+        	throw new BookingNotFound("Booking is already cancelled");
+        }
+        long carId = bookingCheck.getCar().getId(); 
         Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new UserNotFound(String.format("User Id %d is not found", userId)));
         Car car = carRepo.findById(carId)
@@ -120,7 +147,10 @@ public class BookingServiceImpl implements BookingService {
         carRepo.save(car);
         logger.info("Booking cancelled successfully for userId: {}, carId: {}, bookingId: {}", userId, carId, booking.getBookId());
     }
+    
+    
 
+    // Get all booking details (Admin only)
     @Override
     public List<AllBookingDetailsDto> getAllBookingDetails() {
         logger.info("Retrieving all booking details");
@@ -142,14 +172,28 @@ public class BookingServiceImpl implements BookingService {
             booking.getBookingDate(),
             booking.getStartDate(),
             booking.getEndDate(),
-            booking.getStatus()
+            booking.getStatus(),
+            booking.getPrice(),
+            booking.getUser().getEmail()
         ); 
     }
 
+    
+
+    // Complete a booking (Admin only)
     @Override
-    public String completeBooking(long userId, long carId) {
-        logger.info("Completion request received for userId: {}, carId: {}", userId, carId);
+    public AllBookingDetailsDto completeBooking(long bookId) {
+    
+
         
+        Booking bookingCheck = bookingRepo.findById(bookId).orElseThrow(
+        		()-> new BookingNotFound("Booking is not found with this id"))
+        		;
+        logger.info("Cancellation request received for userId: {}, carId: {}", bookingCheck.getUser().getId(), bookingCheck.getCar().getId());
+   
+     
+        long carId = bookingCheck.getCar().getId(); 
+        long userId  = bookingCheck.getUser().getId();
         Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new UserNotFound(String.format("User Id %d is not found", userId)));
         Car car = carRepo.findById(carId)
@@ -174,7 +218,7 @@ public class BookingServiceImpl implements BookingService {
             carRepo.save(car);
 
             logger.info("Booking completed successfully for userId: {}, carId: {}, bookingId: {}", userId, carId, booking.getBookId());
-            return String.format("Booking completed successfully! Booking Id: %d", booking.getBookId());
+            return BookingToAllBooking(booking);
         } else {
             long daysLate = ChronoUnit.DAYS.between(booking.getEndDate(), today) + 1;
 
@@ -188,7 +232,19 @@ public class BookingServiceImpl implements BookingService {
             carRepo.save(car);
 
             logger.info("Booking completed with additional charges for userId: {}, carId: {}, bookingId: {}", userId, carId, booking.getBookId());
-            return String.format("The booking is still active. Total bill: %d", totalBill);
+            return BookingToAllBooking(booking);
         }
+        
     }
+    
+    //extracting the user id by using email in jwt token
+    public long getUserIdFromToken(String token)   { 
+    	String email = service.extractUserName(token.substring(7)); // Remove 'Bearer ' prefix 
+    	Users user = userRepo.findByEmail(email).orElseThrow(
+    			()->new UserNotFound("Used with this emil not found")
+    			);
+        return user.getId();
+    }
+    
+    
 }
