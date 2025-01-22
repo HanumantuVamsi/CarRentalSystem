@@ -28,6 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
     ApplicationContext context;
 
     @Override
+    // This filter is executed once per request and before the basic authentication filter
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 //  Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJraWxsIiwiaWF0IjoxNzIzMTgzNzExLCJleHAiOjE3MjMxODM4MTl9.5nf7dRzKRiuGurN2B9dHh_M5xiu73ZzWPr6rbhOTTHs
     	String authHeader = request.getHeader("Authorization");
@@ -53,7 +54,7 @@ public class JwtFilter extends OncePerRequestFilter {
             	System.out.println("Token validation failed for user: " + username); 
             }
         }
-
+        // Pass the request and response to the next filter in the filter chain
         filterChain.doFilter(request, response);
     }
 }

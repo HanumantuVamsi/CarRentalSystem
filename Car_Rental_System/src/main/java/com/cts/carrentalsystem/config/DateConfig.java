@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class DateConfig {
+	    // Configure ObjectMapper to handle Java 8 date/time types
 	    @Bean
 	    public ObjectMapper objectMapper() {
 	        ObjectMapper mapper = new ObjectMapper();

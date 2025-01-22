@@ -10,6 +10,7 @@ import com.cts.carrentalsystem.model.Users;
 import java.util.Collection;
 import java.util.Collections;
 
+// this class implements userdetails this sends the authentication object to authentication manager
 public class UserPrincipal implements UserDetails {
 
     private Users user;
@@ -18,11 +19,13 @@ public class UserPrincipal implements UserDetails {
         this.user = user;
     }
 
+ // Return the authorities granted to the user
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority(user.getRole().name()));
     }
 
+    
     @Override
     public String getPassword() {
         return user.getPassword();

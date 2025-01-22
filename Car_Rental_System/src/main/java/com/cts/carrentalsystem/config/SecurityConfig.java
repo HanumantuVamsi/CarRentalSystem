@@ -30,6 +30,7 @@ public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
 
+    //Adding this security filter chain instead of default
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
@@ -47,17 +48,20 @@ public class SecurityConfig {
         return http.build();
     }
 
+    //password encode bean to bcrypt the password
     @Bean
     public PasswordEncoder passwordEncode() {
         return new BCryptPasswordEncoder();
     }
 
+    //This bean take care of all authentication operations in the application
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    //To remove cors errors to access backend resources
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {

@@ -28,29 +28,35 @@ public class GlobalException {
 		return ResponseEntity.badRequest().body(ex.getMessage());
 	}
 
+	// car not found exception
 	@ExceptionHandler(CarNotFound.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ResponseEntity<String> handleCarNotFoundException(CarNotFound ex) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 	}
+	
+	//user not found exception
 	@ExceptionHandler(UserNotFound.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ResponseEntity<String> handleUserNotFoundException(UserNotFound ex) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 	}
-
+	
+    //car already booked exception
 	@ExceptionHandler(CarAlreadyBooked.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ResponseEntity<String> handleCarBookedException(CarAlreadyBooked ex) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 	}
 	
+	//Booking not found exception
 	@ExceptionHandler(BookingNotFound.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ResponseEntity<String> handleCarBookedException(BookingNotFound ex) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 	}
 	
+	//bad credential exceptions
 	@ExceptionHandler(BadCredentialsException.class)
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	public ResponseEntity<String> handleBadCredentialsException(BadCredentialsException ex) {

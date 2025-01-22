@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+//this implements the UserdetailsService interface to load the username and return UserDetails object for authentication manager
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
