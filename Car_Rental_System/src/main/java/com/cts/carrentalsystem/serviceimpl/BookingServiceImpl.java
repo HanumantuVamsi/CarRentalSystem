@@ -83,7 +83,7 @@ public class BookingServiceImpl implements BookingService {
     
     // Get booking details for the authenticated user
     @Override
-    public List<BookingDetailsDto> getBookingByUserId(String token) {
+    public List<BookingDetailsDto> getBookingByUserToken(String token) {
     	long userId = getUserIdFromToken(token);
         logger.info("Retrieving bookings for userId: {}", userId);
         
@@ -248,6 +248,21 @@ public class BookingServiceImpl implements BookingService {
     			);
         return user.getId();
     }
+
+
+ // Get all booking details based on user id (Admin only)
+	@Override
+	public List<BookingDetailsDto> getBookingByUserId(long userId) {
+		 logger.info("Retrieving bookings for userId: {}", userId);
+	        
+	        Users user = userRepo.findById(userId)
+	                .orElseThrow(() -> new UserNotFound(String.format("User Id %d is not found", userId)));
+	        
+	        List<Booking> bookings = bookingRepo.findByUserId(userId);
+	        logger.info("Found {} bookings for userId: {}", bookings.size(), userId);
+	        
+	        return bookings.stream() .map(this::mapToDTO) .collect(Collectors.toList());
+	}
     
     
 }

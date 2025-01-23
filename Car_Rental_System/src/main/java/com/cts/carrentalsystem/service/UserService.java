@@ -17,4 +17,6 @@ public interface UserService {
 	 // Get all users
 	List<UserDto>getAllUsers();
 
+	String deleteUser(long userId);
+
 }

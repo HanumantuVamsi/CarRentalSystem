@@ -46,10 +46,19 @@ public class BookingController {
 	// Get booking details for the authenticated user
 	@GetMapping("/id")
 	@PreAuthorize("hasAuthority('CUSTOMER')")
-	public ResponseEntity<List<BookingDetailsDto>>getBookingByUserId(@RequestHeader("Authorization") String token){
+	public ResponseEntity<List<BookingDetailsDto>>getBookingByUserToken(@RequestHeader("Authorization") String token){
 		
 		
-		return new ResponseEntity<List<BookingDetailsDto>>(service.getBookingByUserId(token),HttpStatus.OK);
+		return new ResponseEntity<List<BookingDetailsDto>>(service.getBookingByUserToken(token),HttpStatus.OK);
+	}
+	
+	// Get booking details of the user by user id
+	@GetMapping("/{userId}")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public ResponseEntity<List<BookingDetailsDto>>getBookingByUserId(@PathVariable long userId){
+		
+		
+		return new ResponseEntity<List<BookingDetailsDto>>(service.getBookingByUserId(userId),HttpStatus.OK);
 	}
 	
 	 // Cancel a booking 

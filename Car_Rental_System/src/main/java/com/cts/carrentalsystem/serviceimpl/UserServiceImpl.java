@@ -81,6 +81,7 @@ public class UserServiceImpl implements UserService {
 		userDto.setEmail(user.getEmail());
 		userDto.setPassword(user.getPassword());
 		userDto.setRole(user.getRole());
+		userDto.setId(user.getId());
 		return userDto;
 	}
 
@@ -158,6 +159,14 @@ public class UserServiceImpl implements UserService {
 			userDtos.add(mapToDto(user));
 		}
 		return userDtos;
+	}
+
+	//delete the user by using user id
+	@Override
+	public String deleteUser(long userId) {
+		// TODO Auto-generated method stub
+		userRepo.deleteById(userId);
+		return "User Deleted Successfully";
 	}
 
 }

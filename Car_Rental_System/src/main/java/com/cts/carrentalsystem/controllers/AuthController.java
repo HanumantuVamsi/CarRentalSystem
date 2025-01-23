@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,5 +59,12 @@ public class AuthController {
     public ResponseEntity<List<UserDto>> getAllusers(){
     	
     	return new ResponseEntity<List<UserDto>>(userService.getAllUsers(),HttpStatus.OK);
+    }
+    
+    //This method delete the registered user.
+    @DeleteMapping("/{userId}")
+	@PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> deleteUser(@PathVariable long userId){
+    	return new ResponseEntity<String>(userService.deleteUser(userId),HttpStatus.OK);
     }
 }

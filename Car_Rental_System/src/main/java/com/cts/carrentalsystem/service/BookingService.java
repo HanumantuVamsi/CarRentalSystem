@@ -13,7 +13,7 @@ public interface BookingService {
 	void booking(String token, long carId, BookDto book);
 	
 	  // Get booking details for the authenticated user
-	List<BookingDetailsDto> getBookingByUserId(String token);
+	List<BookingDetailsDto> getBookingByUserToken(String token);
 
 	 // Cancel a booking
 	void cancelBooking(String token, long carId);
@@ -25,5 +25,8 @@ public interface BookingService {
 
     // Complete a booking (Admin only)
 	AllBookingDetailsDto completeBooking( long carId);
+	
+	// Get all booking details based on user id (Admin only)
+	List<BookingDetailsDto> getBookingByUserId(long userId);
 
 }
